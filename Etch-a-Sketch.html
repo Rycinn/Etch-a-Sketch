@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        body{
+            background-color: darkkhaki;
+        }
+        #gridSizeDisplay{
+            position: absolute;
+            border: 4px solid red;
+            background-color: white;
+            width: 200px;
+            height: 50px;
+            left: 50%;
+            top: 10%;
+            transform: translate(-50%, -50%);
+        }
+        #gridText{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 35px;
+        }
+        .grid{
+            display: grid;
+            width: 600px;
+            height: 600px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid red;
+            background-color: white;
+        }
+        .cells {
+            padding-bottom: 100%;
+        }
+        .toggleOn{
+            background-color: black;
+        }
+        footer{
+            position: absolute;
+            top: 85%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        button{
+            font-size: 20px;
+            background-color: grey;
+        }
+    </style>
+
+    <head>
+        <title>Etch-A-Sketch</title>
+        <meta char="UTF-8">
+    </head>
+    <header id="gridSizeDisplay">
+        <div id="gridText">16x16</div>
+    </header>
+    <main class="grid">
+    </main>
+    <body></body>
+    <footer>
+        <button type="button" id="reset">Reset</button>
+        <button type="button" id="resize">Resize</button>
+    </footer>
+    <script>
+        let toAdd = document.createDocumentFragment();
+        let grid = document.querySelector(".grid");
+        grid.style.gridTemplateColumns = "repeat(16, 37.5px)";
+        for (i=0; i<256; ++i) {
+            let cell = document.createElement("div");
+            cell.id = i;
+            cell.className = "cells";
+            toAdd.appendChild(cell);
+        }
+        let cells = document.getElementsByClassName("cells");
+        grid.appendChild(toAdd);
+        etchASketch();
+        function etchASketch() {
+            for (i=0; i < cells.length; i++) {
+              cells[i].addEventListener ("mouseover", toggleOn);
+            }
+        }
+        let resetButton = document.getElementById("reset");
+        resetButton.addEventListener("click", toggleOff);
+        function toggleOn(e) {
+            e.target.classList.add("toggleOn");
+        }
+
+        function toggleOff() {
+            for (i = 0; i < cells.length; i++) {
+                cells[i].classList.remove("toggleOn");
+            }
+        }
+
+        let resize = document.getElementById("resize");
+        resize.addEventListener("click", changeSize);
+
+        function changeSize() {
+            clearGrid();
+            let input = prompt("How many cells across would you like the game to be (MAX: 150)");
+            let newSize = input * input;
+            let newAdd = document.createDocumentFragment();
+            for (i = 0; i < newSize; i++) {
+                let cells = document.createElement("div");
+                cells.className = "cells";
+                cells.id = i;
+                newAdd.appendChild(cells);
+            }
+            grid.appendChild(newAdd);
+            let pxSize = 600 / input;
+            grid.style["grid-template-columns"] = `repeat(${input}, ${pxSize}px)`;
+            etchASketch();
+            let gridText = document.getElementById("gridText");
+            gridText.textContent = `${input}x${input}`;
+        }
+
+        function clearGrid() {
+            while (grid.firstChild) {
+                grid.removeChild(grid.firstChild);
+            }
+        }
+    </script>
+</html>
